@@ -11,6 +11,7 @@ sur du bare_metal sans la librairie standard */
                                              //_start (notre entrypoint)
 use core::panic::PanicInfo;
 
+mod qemu;
 mod vga_buffer;
 
 #[cfg(test)] //On inclue cette fonction dans le build uniquement quand on build pour test
@@ -21,6 +22,9 @@ pub fn test_runner(tests: &[&dyn Fn()]) {
     for test in tests {
         test();
     }
+
+    use qemu::*;
+    exit_qemu(QemuExitCode::Success);
 }
 
 /* Obligé de définir un panic handler (Une fonction appelée quand une erreur critique survient)
