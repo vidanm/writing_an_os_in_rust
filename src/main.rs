@@ -2,9 +2,26 @@
 sur du bare_metal sans la librairie standard */
 #![no_std]
 #![no_main]
+#![feature(custom_test_frameworks)] // Nécessaire car le module test est défini dans le standard
+#![test_runner(crate::test_runner)]
+#![reexport_test_harness_main = "test_main"] //Le test runner va chercher à s'éxecuter dans un main
+                                             //qu'il va générer hors on à spécifié ne pas vouloir de                                              //main, il faut donc lui dire que le
+                                             //nouveau nom pour la fonction qui va s'occuper des
+                                             //tests est "test_main". On l'appelle ensuite dans
+                                             //_start (notre entrypoint)
 use core::panic::PanicInfo;
 
 mod vga_buffer;
+
+#[cfg(test)] //On inclue cette fonction dans le build uniquement quand on build pour test
+pub fn test_runner(tests: &[&dyn Fn()]) {
+    //&[&dyn Fn()] : Liste de références de types qui peuvent être appelé
+    //comme des fonctions
+    println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
+}
 
 /* Obligé de définir un panic handler (Une fonction appelée quand une erreur critique survient)
 car il est normalement défini dans le standard */
@@ -35,6 +52,15 @@ pub extern "C" fn _start() -> ! {
     }
     */
     println!("Hello World {}", "!");
+    #[cfg(test)]
+    test_main();
 
     loop {}
+}
+
+#[test_case]
+fn trivial_assertion() {
+    print!("trivial assertion...");
+    assert_eq!(1, 1);
+    println!("[ok]")
 }
