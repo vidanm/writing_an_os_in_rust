@@ -1,0 +1,22 @@
+[package]
+name = "rust_os"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bootloader = "0.9"
+volatile = "0.2.6" #Spécifie au compilateur que le programme à des effets de bord et qu'il ne faut pas l'optimiser
+spin = "0.5.2" # Instead of blocking, the threads simply try to lock it again and again in a tight loop, thus burning CPU time until the mutex is free again.
+
+[dependencies.lazy_static]
+# Permets l'initialisation des variables à statiques uniquement quand elles sont accédées pour la première fois au lieu des les initialiser at compile time
+version = "1.0"
+features = ["spin_no_std"]
+
+[profile.dev]
+# Désactivation de l'unwinding (Libération de la mémoire en cas de panic)
+## Définie dans la définition de la target donc plus besoin de l'avoir ici
+### panic = "abort"
+
+[profile.release]
+
