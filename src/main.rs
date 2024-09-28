@@ -12,6 +12,7 @@ sur du bare_metal sans la librairie standard */
 use core::panic::PanicInfo;
 
 mod qemu;
+mod serial;
 mod vga_buffer;
 
 #[cfg(test)] //On inclue cette fonction dans le build uniquement quand on build pour test
@@ -29,6 +30,8 @@ pub fn test_runner(tests: &[&dyn Fn()]) {
 
 /* Obligé de définir un panic handler (Une fonction appelée quand une erreur critique survient)
 car il est normalement défini dans le standard */
+
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     /* PanicInfo contient le fichier et la ligne qui à fait survenir l'erreur critique
@@ -38,6 +41,17 @@ fn panic(info: &PanicInfo) -> ! {
     contextes de pattern matching sans faire panic le programme
     https://doc.rust-lang.org/rust-by-example/fn/diverging.html */
     println!("{}", info);
+    loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    use qemu::*;
+
+    serial_println!("[failed]\n");
+    serial_println!("Error: {}\n", info);
+    exit_qemu(QemuExitCode::Failed);
     loop {}
 }
 
@@ -64,7 +78,7 @@ pub extern "C" fn _start() -> ! {
 
 #[test_case]
 fn trivial_assertion() {
-    print!("trivial assertion...");
+    serial_print!("trivial assertion...");
     assert_eq!(1, 1);
-    println!("[ok]")
+    serial_println!("[ok]");
 }
