@@ -42,3 +42,4 @@ Lock qui boucle activement (au lieu de bloquer un thread) jusqu'à ce que le ver
 
 ## Universal asynchronous receiver-transmitter (UARTs)
 
+## Serial Ports
