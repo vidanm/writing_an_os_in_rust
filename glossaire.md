@@ -45,3 +45,36 @@ Lock qui boucle activement (au lieu de bloquer un thread) jusqu'à ce que le ver
 ## Serial Ports
 
 ## Harness flag (Cargo.toml [test])
+
+## SSE Instructions
+
+## Ou vont les arguments des fonctions en X86_64 Linux ?
+En C
+Les six premiers int arguments vont dans les registres :
+rdi, rsi, rdx, rcx, r8, r9
+Les arguments supplémentaires vont sur la pile.
+Les résultats sont dans rax et rdx
+
+## Preserved Registers
+### C : rbp, rbx rsp, r12, r13, c14, r15
+The values of preserved registers must remain unchanged across function calls. So a called function (the “callee”) is only allowed to overwrite these registers if it restores their original values before returning. Therefore, these registers are called “callee-saved”. A common pattern is to save these registers to the stack at the function’s beginning and restore them just before returning.
+
+## Scratch Registers
+### C : rax, rcx, rdx, rsi, rdi, r8, r9, r10, r11
+A called function is allowed to overwrite scratch registers without restrictions. If the caller wants to preserve the value of a scratch register across a function call, it needs to backup and restore it before the function call (e.g., by pushing it to the stack). So the scratch registers are caller-saved.
+
+
+## Interrupt Descriptor Table
+
+
+### Options field
+| Bits  | Name                             | Description                                                                                                         |
+|-------|----------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| 0-2   | Interrupt Stack Table Index      | 0: Don’t switch stacks, 1-7: Switch to the n-th <br>stack in the Interrupt Stack Table when this handler is called. |
+| 3-7   | Reserved                         |                                                                                                                     |
+| 8     | 0: Interrupt Gate, 1: Trap Gate  | If this bit is 0, interrupts are disabled when this handler is called.                                          |
+| 9-11  | must be one                      |                                                                                                                     |
+| 12    | must be zero                     |                                                                                                                     |
+| 13‑14 | Descriptor Privilege Level (DPL) | The minimal privilege level required <br>for calling this handler.                                                  |
+| 15    | Present                          |                                                                                                                     |
+
