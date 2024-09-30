@@ -39,3 +39,9 @@ Consiste en 25 lignes de 80 caractères
 
 ## Spinlock
 Lock qui boucle activement (au lieu de bloquer un thread) jusqu'à ce que le verrou soit disponible. Il est utile dans des situations où on s'attend à ce que le verrou soit libéré très rapidement, mais il est inefficace si la période d'attente est longue, car il gaspille des cycles CPU.
+
+## Universal asynchronous receiver-transmitter (UARTs)
+
+## Serial Ports
+
+## Harness flag (Cargo.toml [test])

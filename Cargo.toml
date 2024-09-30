@@ -7,11 +7,20 @@ edition = "2021"
 bootloader = "0.9"
 volatile = "0.2.6" #Spécifie au compilateur que le programme à des effets de bord et qu'il ne faut pas l'optimiser
 spin = "0.5.2" # Instead of blocking, the threads simply try to lock it again and again in a tight loop, thus burning CPU time until the mutex is free again.
+x86_64 = "0.14.2" # Opérations I/O sur systèmes x86_64 (Utile pour interagir avec qemu)
+uart_16550 = "0.2.0" # Chips implementing serial Ports
 
 [dependencies.lazy_static]
 # Permets l'initialisation des variables à statiques uniquement quand elles sont accédées pour la première fois au lieu des les initialiser at compile time
 version = "1.0"
 features = ["spin_no_std"]
+
+[package.metadata.bootimage]
+test-args = [
+  "-device", "isa-debug-exit,iobase=0xf4,iosize=0x04","-serial","stdio",
+  "-display","none"
+]
+test-success-exit-code = 33 # "(0x10 << 1) | 1" Le code que renvoie qemu si tout s'est bien passé
 
 [profile.dev]
 # Désactivation de l'unwinding (Libération de la mémoire en cas de panic)
@@ -20,3 +29,7 @@ features = ["spin_no_std"]
 
 [profile.release]
 
+
+[[test]]
+name = "should_panic"
+harness = false
