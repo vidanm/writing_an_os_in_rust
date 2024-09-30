@@ -16,15 +16,12 @@ jobs:
     name: Rust project
     runs-on: ubuntu-latest
     steps:
-      - name: target
-        run : "rustup target add x86_64-rust_os.json"
       - uses: actions/checkout@v2
       - name: Install latest nightly
         uses: actions-rs/toolchain@v1
         with:
             toolchain: nightly
             override: true
-#            target: x86_64-rust_os.json
 
       - name: Run cargo check
         uses: actions-rs/cargo@v1
